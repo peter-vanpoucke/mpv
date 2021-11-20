@@ -41,10 +41,15 @@ Available audio output drivers are:
 ``jack``
     JACK (Jack Audio Connection Kit) audio output driver.
 
+
     The following global options are supported by this audio output:
 
     ``--jack-port=<name>``
         Connects to the ports with the given name (default: physical ports).
+    ``--jack-server=<server_name>``
+        Server name used to select among several possible concurrent server instances. 
+        Server names are unique to each user.
+        (default: ``default``; unless $JACK_DEFAULT_SERVER is defined in the process environment)
     ``--jack-name=<client>``
         Client name that is passed to JACK (default: ``mpv``). Useful
         if you want to have certain connections established automatically.
