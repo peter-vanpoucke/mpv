@@ -46,6 +46,7 @@
 
 struct jack_opts {
     char *port;
+    char *server_name;
     char *client_name;
     int connect;
     int autostart;
@@ -56,6 +57,7 @@ struct jack_opts {
 static const struct m_sub_options ao_jack_conf = {
     .opts = (const struct m_option[]){
         {"jack-port", OPT_STRING(port)},
+        {"jack-server", OPT_STRING(server_name)},
         {"jack-name", OPT_STRING(client_name)},
         {"jack-autostart", OPT_FLAG(autostart)},
         {"jack-connect", OPT_FLAG(connect)},
@@ -233,8 +235,17 @@ static int init(struct ao *ao)
     open_options = JackNullOption;
     if (!p->opts->autostart)
         open_options |= JackNoStartServer;
-
-    p->client = jack_client_open(p->opts->client_name, open_options, NULL);
+    
+    if (p->opts->server_name && p->opts->server_name[0])
+    {
+        open_options |= JackServerName;
+        p->client = jack_client_open(p->opts->client_name, open_options, NULL, p->opts->server_name);
+    }
+    else
+    {
+        p->client = jack_client_open(p->opts->client_name, open_options, NULL);
+    }
+    
     if (!p->client) {
         MP_FATAL(ao, "cannot open server\n");
         goto err_client_open;
